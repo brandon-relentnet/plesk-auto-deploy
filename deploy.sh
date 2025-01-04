@@ -112,7 +112,7 @@ echo "Deploy script created successfully at ${DEPLOY_SCRIPT_PATH}."
 # Prompt to add a GitHub repo
 read -p "Add a GitHub repo (SSH link / no): " REPO_LINK
 if [ "$REPO_LINK" != "no" ] && [ -n "$REPO_LINK" ]; then
-  echo "Setting up GitHub repository for ${DOMAIN}..."
+  echo "Setting up GitHub repository for ${DOMAIN}, this may take a few minutes..."
 
   # Add the GitHub repository using Plesk Git
   plesk ext git --create -domain "$DOMAIN" -name pull -remote-url "$REPO_LINK" -actions "bash ${DEPLOY_SCRIPT_PATH}" -deployment-mode auto >/dev/null 2>&1
@@ -125,4 +125,25 @@ else
   echo "No GitHub repository added."
 fi
 
+# Print Apache configuration instructions
+APACHE_CONFIG=$(cat <<EOF
+
+<Location />
+    ProxyPass http://127.0.0.1:${PORT}/
+    ProxyPassReverse http://127.0.0.1:${PORT}/
+</Location>
+
+EOF
+)
+
 echo "Setup complete for ${DOMAIN}."
+echo ""
+echo "**If you are using Apache web services, follow these steps**"
+echo "1. Go to the domain page -> 'Hosting & DNS' tab -> 'Apache & Nginx'."
+echo "2. Under 'Additional directives for HTTPS', copy and paste the lines below:"
+echo "$APACHE_CONFIG"
+echo "3. Click 'Apply'."
+
+echo ""
+echo "Each domain will have its own pm2 process. To view all the currently running processes, use the following commands:"
+echo "./check-pm2.sh"

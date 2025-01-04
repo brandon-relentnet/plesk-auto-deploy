@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Prompt for SSH access check
+read -p "Have you already set SSH access to '/bin/bash'? (y/n): " SSH_ACCESS
+if [ "$SSH_ACCESS" != "y" ]; then
+  echo "Please set SSH access to '/bin/bash' for this domain."
+  echo "Go to the domain page -> 'Hosting & DNS' tab -> 'Hosting' -> 'SSH access' -> set type to '/bin/bash'."
+  exit 1
+fi
+
+# Prompt for Node.js enablement
+read -p "Have you enabled Node.js for this domain? (y/n): " NODEJS_ENABLED
+if [ "$NODEJS_ENABLED" != "y" ]; then
+  echo "Please enable Node.js for this domain."
+  echo "Go to the domain page -> 'Dashboard' tab -> 'Node.js' -> 'Enable Node.js'."
+  echo "Make sure your document root and application root are correct."
+  exit 1
+fi
+
 # Prompt for domain
 read -p "Enter domain (e.g., fleetingfascinations.com): " DOMAIN
 if [ -z "$DOMAIN" ]; then
